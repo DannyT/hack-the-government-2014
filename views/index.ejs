@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hack The Government 2014</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  </head>
+  <body>
+    <h1>Hack The Government 2014</h1>
+    <ul>
+    	<li>
+    		<h2>Total Road Traffic Accidents in UK since 1979</h2>
+    		<p class="total-accidents"></p>
+    	</li>
+    	<li>
+    		<h2>Accidents by Local Authority</h2>
+    		<table id="accidents-table">
+    			<tbody>
+	    			<tr>
+	    				<th>Rank</th>
+	    				<th>Local Authority</th>
+	    				<th>Accidents</th>
+	    			</tr>
+    			</tbody>
+    		</table>
+    	</li>
+    	<li>
+    		<h2>MvF</h2>
+			<table id="gender-table">
+    			<tbody>
+	    			<tr>
+	    				<th>Gender</th>
+	    				<th>Accidents</th>
+	    			</tr>
+    			</tbody>
+    		</table>
+    	</li>
+    </ul>
+    <script>
+	(function() {
+		$.getJSON( '/accidents', {
+			format: 'json'
+		})
+	  	.done(function( data ) {
+		    $('.total-accidents').text(data);
+	    })
+	    .fail(function( jqxhr, textStatus, error ) {
+		    var err = textStatus + ", " + error;
+		    console.log( "Request Failed: " + err );
+		});
+		
+		$.getJSON( '/accidents-by-authority', {
+	    	format: 'json'
+		})
+		.done(function( data ) {
+	  		$.each( data, function( i, item ) {
+	    		var rank = i+1;
+		    	$('#accidents-table tr:last')
+	    		.after('<tr><td>'+ rank +'</td><td>'+ item.localAuthority +'</td><td>'+ item.total +'</td></tr>');
+	      	});
+	    })
+	    .fail(function( jqxhr, textStatus, error ) {
+		    var err = textStatus + ", " + error;
+		    console.log( "Request Failed: " + err );
+		});
+	  	
+	  	$.getJSON( '/gender', {
+	    	format: 'json'
+	  	})
+	  	.done(function( data ) {
+	  		$.each( data, function( i, item ) {
+	    		var rank = i+1;
+		    	$('#gender-table tr:last')
+	    		.after('<tr><td>'+ item.gender +'</td><td>'+ item.total +'</td></tr>');
+	      	});
+	    })
+	    .fail(function( jqxhr, textStatus, error ) {
+		    var err = textStatus + ", " + error;
+		    console.log( "Request Failed: " + err );
+		});
+	})();
+	</script>
+  </body>
+</html>
